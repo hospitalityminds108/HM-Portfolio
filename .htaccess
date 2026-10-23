@@ -1,0 +1,63 @@
+# Hospitality Minds portfolio — Apache / LiteSpeed configuration
+# Upload with the contents of dist/ to the web root.
+
+Options -Indexes
+DirectoryIndex index.html index.php
+ErrorDocument 404 /404.html
+
+AddType image/webp .webp
+AddType image/avif .avif
+AddType application/manifest+json .webmanifest
+AddDefaultCharset utf-8
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Always serve over HTTPS on the canonical host
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  RewriteCond %{HTTP_HOST} ^www\.hospitalitymindsportfolio\.com$ [NC]
+  RewriteRule ^ https://hospitalitymindsportfolio.com%{REQUEST_URI} [L,R=301]
+
+  # Permanent redirects from the previous WordPress URLs
+  RewriteRule ^hotel-reels/?$                /video-production/hotel-reels/            [R=301,L]
+  RewriteRule ^influencer-reels/?$           /video-production/influencer-reels/       [R=301,L]
+  RewriteRule ^food-and-restaurant-reels/?$  /video-production/food-restaurant-reels/  [R=301,L]
+  RewriteRule ^banquet-reels/?$              /video-production/wedding-banquet-films/  [R=301,L]
+  RewriteRule ^walkthrough/?$                /video-production/hotel-walkthroughs/     [R=301,L]
+  RewriteRule ^property-tour/?$              /video-production/hotel-overview-films/   [R=301,L]
+  RewriteRule ^reviews/?$                    /video-production/review-films/           [R=301,L]
+  RewriteRule ^our-visits/?$                 /video-production/behind-the-scenes/      [R=301,L]
+  RewriteRule ^hotel/?$                      /photography/hotel/                       [R=301,L]
+  RewriteRule ^resort/?$                     /photography/resort/                      [R=301,L]
+  RewriteRule ^food/?$                       /photography/food/                        [R=301,L]
+  RewriteRule ^contact-us/?$                 /contact/                                 [R=301,L]
+
+  # Add a trailing slash to page URLs (/about → /about/)
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME}/index.html -f
+  RewriteRule ^(.*[^/])$ /$1/ [R=301,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+
+  # Fingerprinted CSS/JS never change — cache for a year
+  <FilesMatch "^site\.[0-9a-f]{10}\.(css|js)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(webp|avif|jpe?g|png|svg|mp4|woff2|ico)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  <FilesMatch "\.(html|xml|txt|webmanifest)$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json application/xml image/svg+xml text/plain application/manifest+json
+</IfModule>

@@ -1,0 +1,13 @@
+# Redirects for Netlify / Cloudflare Pages (ignored by Apache, which uses .htaccess)
+/hotel-reels                /video-production/hotel-reels/            301
+/influencer-reels           /video-production/influencer-reels/       301
+/food-and-restaurant-reels  /video-production/food-restaurant-reels/  301
+/banquet-reels              /video-production/wedding-banquet-films/  301
+/walkthrough                /video-production/hotel-walkthroughs/     301
+/property-tour              /video-production/hotel-overview-films/   301
+/reviews                    /video-production/review-films/           301
+/our-visits                 /video-production/behind-the-scenes/      301
+/hotel                      /photography/hotel/                       301
+/resort                     /photography/resort/                      301
+/food                       /photography/food/                        301
+/contact-us                 /contact/                                 301

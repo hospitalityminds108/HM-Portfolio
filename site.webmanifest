@@ -1,0 +1,19 @@
+{
+  "name": "Hospitality Minds Portfolio",
+  "short_name": "Hospitality Minds",
+  "icons": [
+    {
+      "src": "/media/brand/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/media/brand/favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#f7f4ee",
+  "background_color": "#f7f4ee",
+  "display": "standalone"
+}

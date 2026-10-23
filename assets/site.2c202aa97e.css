@@ -296,7 +296,7 @@ ul[role='list'], ol[role='list'] { list-style: none; padding: 0; }
   border-radius: var(--radius-s);
   background: #ffd84d;
   color: #1c151e;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -732,7 +732,7 @@ ul[role='list'], ol[role='list'] { list-style: none; padding: 0; }
   border-radius: 999px;
   background: rgba(14, 9, 15, 0.55);
   backdrop-filter: blur(6px);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -757,7 +757,7 @@ ul[role='list'], ol[role='list'] { list-style: none; padding: 0; }
 .no-motion .motion-toggle { display: none; }
 .motion [data-hero-fade] { opacity: 0; }
 html.is-paused .partners__track, html.is-paused .page-hero__frame, html.is-paused .page-hero__frame img, html.is-paused .hero__slide img, html.is-paused .scroll-cue__line::after, html.is-paused .hero__reel-live::before { animation-play-state: paused; }
-.scroll-cue { display: inline-flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--on-dark); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.6875rem; }
+.scroll-cue { display: inline-flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--on-dark); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.75rem; }
 .scroll-cue__line { position: relative; width: 1px; height: 2.25rem; background: rgba(246, 240, 234, 0.25); overflow: hidden; }
 .scroll-cue__line::after { content: ''; position: absolute; inset: 0; background: var(--hm-pink); animation: cue 2.2s var(--ease-in-out) infinite; }
 @keyframes cue { 0% { transform: translateY(-100%); } 60%, 100% { transform: translateY(100%); } }
@@ -906,7 +906,7 @@ html.is-paused .hero__dot::after, html.is-paused .hero__reel-frame { animation-p
   background: rgba(14, 9, 15, 0.6);
   color: var(--on-dark);
   backdrop-filter: blur(8px);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -981,7 +981,7 @@ html.is-paused .hero__dot::after, html.is-paused .hero__reel-frame { animation-p
   transition: transform 0.5s var(--ease-out), opacity 0.4s;
 }
 .reel__btn:hover .reel__info, .reel__btn:focus-visible .reel__info, .reel__btn.is-previewing .reel__info { transform: none; opacity: 1; }
-.reel__cat { font-size: 0.6875rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--hm-pink-soft); }
+.reel__cat { font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--hm-pink-soft); }
 .reel__title { font-family: var(--serif); font-size: 1.3rem; line-height: 1.2; }
 .reel__dur { position: absolute; top: 0.75rem; right: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: rgba(14, 9, 15, 0.55); color: var(--on-dark); font-size: 0.75rem; font-variant-numeric: tabular-nums; }
 @media (hover: none) {
@@ -1619,4 +1619,26 @@ html.is-paused .page-hero::before, html.is-paused .cs-hero__media img, html.is-p
 @media (prefers-reduced-motion: reduce) {
   .page-hero::before, .page-hero__frame, .page-hero__frame img, .cs-hero--light .cs-hero__media img, .cs-split__media img { animation: none; }
   .page-hero__frame { translate: none; }
+}
+
+/* Responsive and touch polish */
+@media (max-width: 600px) {
+  .reel--landscape .reel__frame { --ar: 4 / 3; }
+  .reel__play { top: 42%; }
+}
+.hero__dot { width: clamp(2.5rem, 4vw, 3.25rem); height: 2.75rem; }
+.hero__dots { gap: 0.1rem; }
+.hero__dot::before, .hero__dot::after { right: 0.3rem; left: 0.3rem; }
+@media (pointer: coarse) {
+  .contact-block a, .person__links a, .link-arrow, .motion-toggle { min-height: 2.75rem; }
+  .contact-block ul { gap: 0; }
+  .footer-col a, .crumbs a { display: inline-block; padding-block: 0.5rem; }
+  .footer-col ul { gap: 0; }
+}
+/* Keep content clear of notches and the home indicator (viewport-fit=cover) */
+.container { padding-left: max(var(--gutter), env(safe-area-inset-left)); padding-right: max(var(--gutter), env(safe-area-inset-right)); }
+.fab-wa { right: max(clamp(14px, 2vw, 28px), env(safe-area-inset-right)); bottom: max(clamp(14px, 2vw, 28px), env(safe-area-inset-bottom)); }
+.mobile-menu__inner { padding-bottom: max(2rem, env(safe-area-inset-bottom)); }
+@media (max-width: 600px) {
+  .contact-block li small { display: block; padding-left: 1.65rem; }
 }

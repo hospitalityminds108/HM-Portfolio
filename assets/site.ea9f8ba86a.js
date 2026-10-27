@@ -10,6 +10,7 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
   const saveData = !!(navigator.connection && navigator.connection.saveData);
+  let lenis = null;
   const motionAllowed = () => !reduceMotion.matches && !saveData && !html.classList.contains('is-paused');
 
   /* ---------------------------------------------------------------------------
@@ -164,11 +165,13 @@
     const close = () => { if (menu.open) menu.close(); };
     menuToggle.addEventListener('click', () => {
       menu.showModal();
+      lenis?.stop();
       menuToggle.setAttribute('aria-expanded', 'true');
       document.body.style.overflow = 'hidden';
     });
     menu.addEventListener('close', () => {
       menuToggle.setAttribute('aria-expanded', 'false');
+      lenis?.start();
       document.body.style.overflow = '';
       menuToggle.focus();
     });
@@ -240,6 +243,7 @@
       lbState.index = Math.max(0, lbState.items.indexOf(opener));
       render();
       lb.showModal();
+      lenis?.stop();
       document.body.style.overflow = 'hidden';
       $$('video').forEach((v) => { if (!lb.contains(v)) v.pause(); });
     };
@@ -268,6 +272,7 @@
     lb.addEventListener('close', () => {
       mediaBox.replaceChildren();
       document.body.style.overflow = '';
+      lenis?.start();
       lbState.opener?.focus({ preventScroll: true });
       resumeHero();
     });
@@ -442,9 +447,9 @@
     if (!target) return 0;
     let shown = 0;
     const revealed = [];
-    $$('.collage__item', target).forEach((item) => {
+    $$('.collage__item, .gal__item', target).forEach((item) => {
       const match = value === 'all' || item.dataset.cats.split(' ').includes(value);
-      if (match && item.hidden) revealed.push(item);
+      if (match) revealed.push(item);
       item.hidden = !match;
       if (match) shown += 1;
     });
@@ -470,7 +475,7 @@
       });
       const n = applyFilter(name, value);
       const label = controls.find((c) => c.dataset.filter === value)?.firstChild?.textContent.trim() || 'All';
-      if (status) status.textContent = `Showing ${n} ${value === 'all' ? 'designs' : `${label.toLowerCase()} designs`}`;
+      if (status && !group.hasAttribute('data-filter-quiet')) status.textContent = `Showing ${n} ${value === 'all' ? 'designs' : `${label.toLowerCase()} designs`}`;
       if (countEl) countEl.textContent = `${n} designs`;
       if (urlMode && push) {
         const link = controls.find((c) => c.dataset.filter === value);
@@ -607,18 +612,52 @@
   gsap.registerPlugin(ST);
   gsap.defaults({ ease: 'power3.out', duration: 1 });
 
+  // Smooth scrolling for mouse users; native scrolling everywhere else
+  if (window.Lenis && finePointer.matches && motionAllowed()) {
+    try {
+      lenis = new window.Lenis({ lerp: 0.1, anchors: true });
+      lenis.on('scroll', ST.update);
+      gsap.ticker.add((t) => lenis.raf(t * 1000));
+      gsap.ticker.lagSmoothing(0);
+    } catch (e) { lenis = null; }
+  }
+
+  // Cursor ring that grows over images and videos
+  if (finePointer.matches && motionAllowed()) {
+    const ring = document.createElement('div');
+    ring.className = 'cursor';
+    ring.setAttribute('aria-hidden', 'true');
+    const label = document.createElement('span');
+    label.className = 'cursor__label';
+    ring.append(label);
+    document.body.append(ring);
+    const qx = gsap.quickTo(ring, 'x', { duration: 0.35, ease: 'power3' });
+    const qy = gsap.quickTo(ring, 'y', { duration: 0.35, ease: 'power3' });
+    const mediaSel = '[data-lb], .gal__item a, .work-card__link, .tile, .hero__card, .reel__btn, .page-hero__frame';
+    window.addEventListener('pointermove', (e) => {
+      qx(e.clientX);
+      qy(e.clientY);
+      ring.classList.add('is-on');
+      const t = e.target.closest ? e.target.closest(mediaSel) : null;
+      ring.classList.toggle('is-media', !!t);
+      label.textContent = !t ? '' : (t.matches('[data-lb="video"], .reel__btn, .hero__card--reel') ? 'Play' : (t.matches('[data-lb="image"]') ? 'View' : 'Open'));
+    }, { passive: true });
+    document.documentElement.addEventListener('pointerleave', () => ring.classList.remove('is-on'));
+  }
+
   // Opening animations for the first screen; the safety net below can finish them early
   const intros = [];
 
   // Hero entrance
   const heroTitle = $('.hero__title');
-  if (heroTitle) {
-    const words = $$('.wi', heroTitle);
-    gsap.set(words, { y: 0, yPercent: 105 });
-    intros.push(gsap.timeline({ delay: 0.15 })
-      .from('.hero__slide.is-active picture', { scale: 1.2, duration: 2.6, ease: 'power2.out' }, 0)
-      .to(words, { yPercent: 0, duration: 1.2, stagger: 0.07, ease: 'power4.out' }, 0.3)
-      .fromTo('[data-hero-fade]', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1, stagger: 0.12, clearProps: 'transform' }, 0.75));
+  if ($('.hero')) {
+    const words = heroTitle ? $$('.wi', heroTitle) : [];
+    if (words.length) gsap.set(words, { y: 0, yPercent: 105 });
+    const heroIntro = gsap.timeline({ delay: 0.15 })
+      .from('.hero__slide.is-active picture', { scale: 1.2, duration: 2.6, ease: 'power2.out' }, 0);
+    if (words.length) heroIntro.to(words, { yPercent: 0, duration: 1.2, stagger: 0.07, ease: 'power4.out' }, 0.3);
+    heroIntro.fromTo('[data-hero-fade]', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1.1, stagger: 0.14, clearProps: 'transform' }, 0.5);
+    intros.push(heroIntro);
     // On scroll the copy lifts away while the photo settles in a little closer
     const pastHero = { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true };
     gsap.to('.hero__inner', { yPercent: -10, opacity: 0.3, ease: 'none', scrollTrigger: pastHero });

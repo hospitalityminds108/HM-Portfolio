@@ -1,0 +1,104 @@
+{
+  "redirects": [
+    {
+      "source": "/hotel",
+      "destination": "/photography/rooms/",
+      "permanent": true
+    },
+    {
+      "source": "/hotel/",
+      "destination": "/photography/rooms/",
+      "permanent": true
+    },
+    {
+      "source": "/resort",
+      "destination": "/photography/",
+      "permanent": true
+    },
+    {
+      "source": "/resort/",
+      "destination": "/photography/",
+      "permanent": true
+    },
+    {
+      "source": "/food",
+      "destination": "/photography/restaurant/",
+      "permanent": true
+    },
+    {
+      "source": "/food/",
+      "destination": "/photography/restaurant/",
+      "permanent": true
+    },
+    {
+      "source": "/photography/hotel",
+      "destination": "/photography/rooms/",
+      "permanent": true
+    },
+    {
+      "source": "/photography/hotel/",
+      "destination": "/photography/rooms/",
+      "permanent": true
+    },
+    {
+      "source": "/photography/resort",
+      "destination": "/photography/",
+      "permanent": true
+    },
+    {
+      "source": "/photography/resort/",
+      "destination": "/photography/",
+      "permanent": true
+    },
+    {
+      "source": "/photography/food",
+      "destination": "/photography/restaurant/",
+      "permanent": true
+    },
+    {
+      "source": "/photography/food/",
+      "destination": "/photography/restaurant/",
+      "permanent": true
+    },
+    {
+      "source": "/photography/interiors",
+      "destination": "/photography/rooms/",
+      "permanent": true
+    },
+    {
+      "source": "/photography/interiors/",
+      "destination": "/photography/rooms/",
+      "permanent": true
+    },
+    {
+      "source": "/photography/architecture",
+      "destination": "/photography/facade/",
+      "permanent": true
+    },
+    {
+      "source": "/photography/architecture/",
+      "destination": "/photography/facade/",
+      "permanent": true
+    },
+    {
+      "source": "/photography/lifestyle",
+      "destination": "/photography/",
+      "permanent": true
+    },
+    {
+      "source": "/photography/lifestyle/",
+      "destination": "/photography/",
+      "permanent": true
+    },
+    {
+      "source": "/portfolio/website-development",
+      "destination": "/portfolio/",
+      "permanent": true
+    },
+    {
+      "source": "/portfolio/website-development/",
+      "destination": "/portfolio/",
+      "permanent": true
+    }
+  ]
+}

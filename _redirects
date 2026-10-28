@@ -7,7 +7,14 @@
 /property-tour              /video-production/hotel-overview-films/   301
 /reviews                    /video-production/review-films/           301
 /our-visits                 /video-production/behind-the-scenes/      301
-/hotel                      /photography/hotel/                       301
-/resort                     /photography/resort/                      301
-/food                       /photography/food/                        301
+/hotel                      /photography/rooms/                       301
+/resort                     /photography/                             301
+/food                       /photography/restaurant/                  301
 /contact-us                 /contact/                                 301
+/photography/hotel          /photography/rooms/                       301
+/photography/resort         /photography/                             301
+/photography/food           /photography/restaurant/                  301
+/photography/interiors      /photography/rooms/                       301
+/photography/architecture   /photography/facade/                      301
+/photography/lifestyle      /photography/                             301
+/portfolio/website-development /portfolio/ 301

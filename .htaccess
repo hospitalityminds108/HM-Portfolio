@@ -29,15 +29,22 @@ AddDefaultCharset utf-8
   RewriteRule ^property-tour/?$              /video-production/hotel-overview-films/   [R=301,L]
   RewriteRule ^reviews/?$                    /video-production/review-films/           [R=301,L]
   RewriteRule ^our-visits/?$                 /video-production/behind-the-scenes/      [R=301,L]
-  RewriteRule ^hotel/?$                      /photography/hotel/                       [R=301,L]
-  RewriteRule ^resort/?$                     /photography/resort/                      [R=301,L]
-  RewriteRule ^food/?$                       /photography/food/                        [R=301,L]
+  RewriteRule ^hotel/?$                      /photography/rooms/                       [R=301,L]
+  RewriteRule ^resort/?$                     /photography/                             [R=301,L]
+  RewriteRule ^food/?$                       /photography/restaurant/                  [R=301,L]
+  RewriteRule ^photography/hotel/?$          /photography/rooms/                       [R=301,L]
+  RewriteRule ^photography/resort/?$         /photography/                             [R=301,L]
+  RewriteRule ^photography/food/?$           /photography/restaurant/                  [R=301,L]
+  RewriteRule ^photography/interiors/?$      /photography/rooms/                       [R=301,L]
+  RewriteRule ^photography/architecture/?$   /photography/facade/                      [R=301,L]
+  RewriteRule ^photography/lifestyle/?$      /photography/                             [R=301,L]
+  RewriteRule ^portfolio/website-development/?$ /portfolio/                              [R=301,L]
   RewriteRule ^contact-us/?$                 /contact/                                 [R=301,L]
 
   # Add a trailing slash to page URLs (/about → /about/)
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME}/index.html -f
-  RewriteRule ^(.*[^/])$ /$1/ [R=301,L]
+  RewriteRule ^(.*[^/])$                     /$1/                                      [R=301,L]
 </IfModule>
 
 <IfModule mod_headers.c>

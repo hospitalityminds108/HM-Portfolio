@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://hospitalitymindsportfolio.com/</loc><lastmod>2026-10-28</lastmod><priority>1.0</priority></url>
-  <url><loc>https://hospitalitymindsportfolio.com/video-production/</loc><lastmod>2026-10-23</lastmod><priority>0.8</priority></url>
-  <url><loc>https://hospitalitymindsportfolio.com/video-production/hotel-reels/</loc><lastmod>2026-10-23</lastmod><priority>0.6</priority></url>
-  <url><loc>https://hospitalitymindsportfolio.com/video-production/influencer-reels/</loc><lastmod>2026-10-23</lastmod><priority>0.6</priority></url>
-  <url><loc>https://hospitalitymindsportfolio.com/video-production/food-restaurant-reels/</loc><lastmod>2026-10-23</lastmod><priority>0.6</priority></url>
-  <url><loc>https://hospitalitymindsportfolio.com/video-production/wedding-banquet-films/</loc><lastmod>2026-10-23</lastmod><priority>0.6</priority></url>
-  <url><loc>https://hospitalitymindsportfolio.com/video-production/hotel-walkthroughs/</loc><lastmod>2026-10-23</lastmod><priority>0.6</priority></url>
-  <url><loc>https://hospitalitymindsportfolio.com/video-production/hotel-overview-films/</loc><lastmod>2026-10-23</lastmod><priority>0.6</priority></url>
-  <url><loc>https://hospitalitymindsportfolio.com/video-production/behind-the-scenes/</loc><lastmod>2026-10-23</lastmod><priority>0.6</priority></url>
-  <url><loc>https://hospitalitymindsportfolio.com/video-production/review-films/</loc><lastmod>2026-10-23</lastmod><priority>0.6</priority></url>
+  <url><loc>https://hospitalitymindsportfolio.com/video-production/</loc><lastmod>2026-10-28</lastmod><priority>0.8</priority></url>
   <url><loc>https://hospitalitymindsportfolio.com/photography/</loc><lastmod>2026-10-28</lastmod><priority>0.8</priority></url>
   <url><loc>https://hospitalitymindsportfolio.com/creatives/</loc><lastmod>2026-10-28</lastmod><priority>0.8</priority></url>
   <url><loc>https://hospitalitymindsportfolio.com/creatives/social-media/</loc><lastmod>2026-10-28</lastmod><priority>0.6</priority></url>
@@ -25,4 +17,9 @@
   <url><loc>https://hospitalitymindsportfolio.com/photography/rooms/</loc><lastmod>2026-10-28</lastmod><priority>0.7</priority></url>
   <url><loc>https://hospitalitymindsportfolio.com/photography/pools/</loc><lastmod>2026-10-28</lastmod><priority>0.7</priority></url>
   <url><loc>https://hospitalitymindsportfolio.com/photography/restaurant/</loc><lastmod>2026-10-28</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hospitalitymindsportfolio.com/video-production/client-accounts/</loc><lastmod>2026-10-28</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hospitalitymindsportfolio.com/video-production/influencers/</loc><lastmod>2026-10-28</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hospitalitymindsportfolio.com/video-production/others/</loc><lastmod>2026-10-28</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hospitalitymindsportfolio.com/video-production/food-restaurant/</loc><lastmod>2026-10-28</lastmod><priority>0.7</priority></url>
+  <url><loc>https://hospitalitymindsportfolio.com/video-production/transitions/</loc><lastmod>2026-10-28</lastmod><priority>0.7</priority></url>
 </urlset>

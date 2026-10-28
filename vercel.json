@@ -109,6 +109,86 @@
       "source": "/work/:path*",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/video-production/hotel-reels",
+      "destination": "/video-production/",
+      "permanent": true
+    },
+    {
+      "source": "/video-production/hotel-reels/",
+      "destination": "/video-production/",
+      "permanent": true
+    },
+    {
+      "source": "/video-production/influencer-reels",
+      "destination": "/video-production/influencers/",
+      "permanent": true
+    },
+    {
+      "source": "/video-production/influencer-reels/",
+      "destination": "/video-production/influencers/",
+      "permanent": true
+    },
+    {
+      "source": "/video-production/food-restaurant-reels",
+      "destination": "/video-production/food-restaurant/",
+      "permanent": true
+    },
+    {
+      "source": "/video-production/food-restaurant-reels/",
+      "destination": "/video-production/food-restaurant/",
+      "permanent": true
+    },
+    {
+      "source": "/video-production/wedding-banquet-films",
+      "destination": "/video-production/",
+      "permanent": true
+    },
+    {
+      "source": "/video-production/wedding-banquet-films/",
+      "destination": "/video-production/",
+      "permanent": true
+    },
+    {
+      "source": "/video-production/hotel-walkthroughs",
+      "destination": "/video-production/",
+      "permanent": true
+    },
+    {
+      "source": "/video-production/hotel-walkthroughs/",
+      "destination": "/video-production/",
+      "permanent": true
+    },
+    {
+      "source": "/video-production/hotel-overview-films",
+      "destination": "/video-production/",
+      "permanent": true
+    },
+    {
+      "source": "/video-production/hotel-overview-films/",
+      "destination": "/video-production/",
+      "permanent": true
+    },
+    {
+      "source": "/video-production/behind-the-scenes",
+      "destination": "/video-production/",
+      "permanent": true
+    },
+    {
+      "source": "/video-production/behind-the-scenes/",
+      "destination": "/video-production/",
+      "permanent": true
+    },
+    {
+      "source": "/video-production/review-films",
+      "destination": "/video-production/",
+      "permanent": true
+    },
+    {
+      "source": "/video-production/review-films/",
+      "destination": "/video-production/",
+      "permanent": true
     }
   ]
 }

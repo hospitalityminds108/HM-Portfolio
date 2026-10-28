@@ -38,8 +38,9 @@ AddDefaultCharset utf-8
   RewriteRule ^photography/interiors/?$      /photography/rooms/                       [R=301,L]
   RewriteRule ^photography/architecture/?$   /photography/facade/                      [R=301,L]
   RewriteRule ^photography/lifestyle/?$      /photography/                             [R=301,L]
-  RewriteRule ^portfolio/website-development/?$ /portfolio/                              [R=301,L]
+  RewriteRule ^portfolio/website-development/?$ /                              [R=301,L]
   RewriteRule ^contact-us/?$                 /contact/                                 [R=301,L]
+  RewriteRule ^(portfolio|work)(/.*)?$ /                          [R=301,L]
 
   # Add a trailing slash to page URLs (/about → /about/)
   RewriteCond %{REQUEST_FILENAME} !-f

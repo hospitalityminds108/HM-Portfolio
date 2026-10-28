@@ -17,4 +17,7 @@
 /photography/interiors      /photography/rooms/                       301
 /photography/architecture   /photography/facade/                      301
 /photography/lifestyle      /photography/                             301
-/portfolio/website-development /portfolio/ 301
+/portfolio/website-development / 301
+/portfolio                  /                                         301
+/portfolio/*                /                                         301
+/work/*                     /                                         301

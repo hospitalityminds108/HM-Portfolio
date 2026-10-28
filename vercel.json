@@ -92,12 +92,22 @@
     },
     {
       "source": "/portfolio/website-development",
-      "destination": "/portfolio/",
+      "destination": "/",
       "permanent": true
     },
     {
       "source": "/portfolio/website-development/",
-      "destination": "/portfolio/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/portfolio/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/work/:path*",
+      "destination": "/",
       "permanent": true
     }
   ]

@@ -717,11 +717,21 @@
     if ($('.hcats')) gsap.to('.hcat__media', { scale: 1.08, ease: 'none', scrollTrigger: { ...pastHero } });
   }
 
+  // Inner page heroes: the copy lifts away as you scroll past
+  if ($('.phero')) {
+    gsap.to('.phero__inner', { yPercent: -8, opacity: 0.35, ease: 'none', scrollTrigger: { trigger: '.phero', start: 'top top', end: 'bottom top', scrub: true } });
+  }
+
   // Word-by-word headline reveals
   $$('[data-split]').forEach((el) => {
     if (el === heroTitle) return;
     const words = $$('.wi', el);
     gsap.set(words, { y: 0, yPercent: 105 });
+    // Hero titles enter on load; waiting for a scroll trigger can leave them hidden below the fold
+    if (el.closest('.phero, .cs-hero, .page-hero')) {
+      intros.push(gsap.to(words, { yPercent: 0, duration: 1.1, stagger: 0.05, delay: 0.35, ease: 'power4.out' }));
+      return;
+    }
     ST.create({
       trigger: el,
       start: 'top 88%',
@@ -729,6 +739,13 @@
       onEnter: () => gsap.to(words, { yPercent: 0, duration: 1.1, stagger: 0.05, ease: 'power4.out' }),
     });
   });
+
+  // Hero copy (crumbs, labels, chips, buttons) enters on load as well
+  const heroReveals = $$('.phero [data-reveal], .cs-hero [data-reveal], .page-hero [data-reveal]');
+  if (heroReveals.length) {
+    heroReveals.forEach((el) => { el.dataset.shown = ''; });
+    intros.push(gsap.fromTo(heroReveals, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1, stagger: 0.12, delay: 0.5, clearProps: 'transform' }));
+  }
 
   // Fade-up reveals, batched so items entering together stagger
   ST.batch('[data-reveal]:not([data-reveal="clip"])', {
@@ -764,7 +781,7 @@
         onComplete: () => frames.forEach((f) => { f.style.clipPath = 'none'; }),
       }, 0)
       .from($$('picture', art), { scale: 1.25, duration: 2, stagger: 0.18, ease: 'power3.out', clearProps: 'transform' }, 0));
-    const hero = art.closest('.page-hero');
+    const hero = art.closest('.page-hero, .phero');
     if (!hero || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     hero.addEventListener('pointermove', (e) => {
       const r = hero.getBoundingClientRect();

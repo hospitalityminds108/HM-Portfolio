@@ -394,8 +394,8 @@
   heroDots.forEach((dot) => dot.addEventListener('click', () => showSlide(Number(dot.dataset.heroDot))));
   const stopHero = () => { clearTimeout(heroTimer); heroTimer = null; heroVideo?.pause(); };
   function resumeHero() {
-    if (!heroSlides || !heroVisible || !motionAllowed() || document.hidden || (lb && lb.open)) return;
-    if (!heroTimer) {
+    if (!heroVisible || !motionAllowed() || document.hidden || (lb && lb.open)) return;
+    if (heroSlides && !heroTimer) {
       restartFill();
       scheduleNext();
     }
@@ -404,14 +404,14 @@
       heroVideo.play().then(() => heroVideo.classList.add('is-playing')).catch(() => {});
     }
   }
-  if (heroSlides) {
+  if (heroSlides || heroVideo) {
     const start = () => {
-      const slides = $$('.hero__slide', heroSlides);
+      const slides = heroSlides ? $$('.hero__slide', heroSlides) : [];
       if (slides[1] && motionAllowed()) activate(slides[1]);
       new IntersectionObserver(([entry]) => {
         heroVisible = entry.isIntersecting;
         heroVisible ? resumeHero() : stopHero();
-      }, { threshold: 0.15 }).observe(heroSlides);
+      }, { threshold: 0.15 }).observe(heroSlides || $('.hero'));
       document.addEventListener('visibilitychange', () => (document.hidden ? stopHero() : resumeHero()));
     };
     // Wait for the first (LCP) image before loading anything else in the hero.
@@ -598,6 +598,58 @@
   });
 
   /* ---------------------------------------------------------------------------
+     Category chapters: horizontal rails and the sticky category nav
+     ------------------------------------------------------------------------ */
+  $$('[data-rail-for]').forEach((ctrl) => {
+    const track = document.getElementById(ctrl.dataset.railFor);
+    if (!track) return;
+    const prev = $('[data-rail-prev]', ctrl);
+    const next = $('[data-rail-next]', ctrl);
+    const sync = () => {
+      const max = track.scrollWidth - track.clientWidth - 2;
+      prev.disabled = track.scrollLeft <= 2;
+      next.disabled = track.scrollLeft >= max;
+    };
+    const by = (dir) => track.scrollBy({ left: dir * track.clientWidth * 0.8, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+    prev.addEventListener('click', () => by(-1));
+    next.addEventListener('click', () => by(1));
+    track.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+    // Mouse drag; touch and trackpads already scroll natively
+    let down = null;
+    let moved = false;
+    track.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      down = { x: e.clientX, left: track.scrollLeft };
+      moved = false;
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!down) return;
+      const dx = e.clientX - down.x;
+      if (Math.abs(dx) > 5) { moved = true; track.classList.add('is-dragging'); }
+      if (moved) track.scrollLeft = down.left - dx;
+    });
+    window.addEventListener('pointerup', () => {
+      if (!down) return;
+      down = null;
+      track.classList.remove('is-dragging');
+    });
+    track.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+  });
+
+  const chapterLinks = $$('.chapters a');
+  if (chapterLinks.length && 'IntersectionObserver' in window) {
+    const spy = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        chapterLinks.forEach((a) => (a.getAttribute('href') === `#${en.target.id}` ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    $$('.chap').forEach((c) => spy.observe(c));
+  }
+
+  /* ---------------------------------------------------------------------------
      Motion system (GSAP + ScrollTrigger). Skipped entirely when reduced motion
      is requested or the libraries are unavailable.
      ------------------------------------------------------------------------ */
@@ -653,15 +705,16 @@
   if ($('.hero')) {
     const words = heroTitle ? $$('.wi', heroTitle) : [];
     if (words.length) gsap.set(words, { y: 0, yPercent: 105 });
-    const heroIntro = gsap.timeline({ delay: 0.15 })
-      .from('.hero__slide.is-active picture', { scale: 1.2, duration: 2.6, ease: 'power2.out' }, 0);
+    const heroIntro = gsap.timeline({ delay: 0.15 });
+    if ($('.hero__slide.is-active picture')) heroIntro.from('.hero__slide.is-active picture', { scale: 1.2, duration: 2.6, ease: 'power2.out' }, 0);
     if (words.length) heroIntro.to(words, { yPercent: 0, duration: 1.2, stagger: 0.07, ease: 'power4.out' }, 0.3);
     heroIntro.fromTo('[data-hero-fade]', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1.1, stagger: 0.14, clearProps: 'transform' }, 0.5);
     intros.push(heroIntro);
     // On scroll the copy lifts away while the photo settles in a little closer
     const pastHero = { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true };
-    gsap.to('.hero__inner', { yPercent: -10, opacity: 0.3, ease: 'none', scrollTrigger: pastHero });
-    gsap.to('.hero__slide', { scale: 1.1, ease: 'none', scrollTrigger: { ...pastHero } });
+    if ($('.hero__inner')) gsap.to('.hero__inner', { yPercent: -10, opacity: 0.3, ease: 'none', scrollTrigger: pastHero });
+    if ($('.hero__slide')) gsap.to('.hero__slide', { scale: 1.1, ease: 'none', scrollTrigger: { ...pastHero } });
+    if ($('.hcats')) gsap.to('.hcat__media', { scale: 1.08, ease: 'none', scrollTrigger: { ...pastHero } });
   }
 
   // Word-by-word headline reveals

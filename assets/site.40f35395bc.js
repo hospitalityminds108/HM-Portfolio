@@ -692,7 +692,7 @@
       ring.classList.add('is-on');
       const t = e.target.closest ? e.target.closest(mediaSel) : null;
       ring.classList.toggle('is-media', !!t);
-      label.textContent = !t ? '' : (t.matches('[data-lb="video"], .reel__btn, .fwc, .hero__card--reel') ? 'Play' : (t.matches('[data-lb="image"]') ? 'View' : 'Open'));
+      label.textContent = !t || t.matches('.fwc') ? '' : (t.matches('[data-lb="video"], .reel__btn, .hero__card--reel') ? 'Play' : (t.matches('[data-lb="image"]') ? 'View' : 'Open'));
     }, { passive: true });
     document.documentElement.addEventListener('pointerleave', () => ring.classList.remove('is-on'));
   }

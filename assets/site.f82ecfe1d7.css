@@ -2047,24 +2047,8 @@ html.is-paused .phero__bg img, html.is-paused .phero__frame, html.is-paused .phe
   display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.3rem 0.65rem 0.3rem 0.5rem; border-radius: 999px;
   background: linear-gradient(120deg, var(--hm-pink), var(--hm-magenta)); color: #fff; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
 }
-.fwc__chip .icon { width: 0.7rem; height: 0.7rem; }
 .fwc__n { font-family: var(--serif); font-size: 0.9rem; letter-spacing: 0.08em; color: var(--hm-pink-soft); font-variant-numeric: tabular-nums; }
 
-.fwc__play {
-  position: absolute; left: 50%; top: 50%; display: grid; place-items: center; width: 3.5rem; height: 3.5rem; margin: -1.75rem 0 0 -1.75rem; border-radius: 50%;
-  background: rgba(246, 240, 234, 0.18); backdrop-filter: blur(10px); box-shadow: inset 0 0 0 1px rgba(246, 240, 234, 0.45);
-  opacity: 0; transform: scale(0.6); transition: opacity 0.45s, transform 0.6s var(--ease-out), background-color 0.4s;
-}
-.fwc__play .icon { width: 1.25rem; height: 1.25rem; margin-left: 2px; }
-.fwc__play::after { content: ''; position: absolute; inset: -0.4rem; border-radius: 50%; border: 1px solid rgba(246, 240, 234, 0.5); animation: fw-ping 2.2s ease-out infinite; }
-@keyframes fw-ping { from { transform: scale(0.85); opacity: 0.9; } to { transform: scale(1.5); opacity: 0; } }
-.fwc.is-focus .fwc__play, .fwc:hover .fwc__play, .fwc:focus-visible .fwc__play { opacity: 1; transform: scale(1); }
-.fwc:hover .fwc__play { background: var(--hm-magenta); box-shadow: none; }
-
-.fwc__cap { position: absolute; left: 1rem; right: 1rem; bottom: 1.6rem; display: grid; gap: 0.2rem; opacity: 0; transform: translateY(14px); transition: opacity 0.5s, transform 0.7s var(--ease-out); }
-.fwc__t { font-family: var(--serif); font-size: clamp(1.05rem, 1rem + 0.45vw, 1.4rem); line-height: 1.12; text-wrap: balance; }
-.fwc__s { font-size: 0.75rem; color: rgba(246, 240, 234, 0.78); }
-.fwc.is-focus .fwc__cap, .fwc:hover .fwc__cap, .fwc:focus-visible .fwc__cap { opacity: 1; transform: none; }
 .fwc__bar { position: absolute; left: 1rem; right: 1rem; bottom: 0.8rem; height: 2px; border-radius: 2px; background: rgba(246, 240, 234, 0.28); overflow: hidden; }
 .fwc__bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--hm-pink-soft), #fff); transform: scaleX(var(--p, 0)); transform-origin: left center; }
 
@@ -2121,10 +2105,9 @@ html.is-paused .phero__bg img, html.is-paused .phero__frame, html.is-paused .phe
   .chap--films.fw { --fw-w: 44vw; }
   .fw.is-stage .fw__stage { height: calc(var(--fw-h) + 34vw); }
   .fwc__top { left: 0.65rem; right: 0.65rem; top: 0.65rem; }
-  .fwc__cap { left: 0.75rem; right: 0.75rem; }
-  .fwc__bar { left: 0.75rem; right: 0.75rem; }
+    .fwc__bar { left: 0.75rem; right: 0.75rem; }
   .fw__prog { order: 3; flex-basis: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .fwc__media img, .fw__glow i, .fwc::after, .fwc__play::after { animation: none; }
+  .fwc__media img, .fw__glow i, .fwc::after, 
 }

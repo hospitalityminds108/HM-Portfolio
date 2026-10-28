@@ -685,14 +685,14 @@
     document.body.append(ring);
     const qx = gsap.quickTo(ring, 'x', { duration: 0.35, ease: 'power3' });
     const qy = gsap.quickTo(ring, 'y', { duration: 0.35, ease: 'power3' });
-    const mediaSel = '[data-lb], .gal__item a, .work-card__link, .tile, .hero__card, .reel__btn, .page-hero__frame';
+    const mediaSel = '[data-lb], .gal__item a, .work-card__link, .tile, .hero__card, .reel__btn, .fwc, .page-hero__frame';
     window.addEventListener('pointermove', (e) => {
       qx(e.clientX);
       qy(e.clientY);
       ring.classList.add('is-on');
       const t = e.target.closest ? e.target.closest(mediaSel) : null;
       ring.classList.toggle('is-media', !!t);
-      label.textContent = !t ? '' : (t.matches('[data-lb="video"], .reel__btn, .hero__card--reel') ? 'Play' : (t.matches('[data-lb="image"]') ? 'View' : 'Open'));
+      label.textContent = !t ? '' : (t.matches('[data-lb="video"], .reel__btn, .fwc, .hero__card--reel') ? 'Play' : (t.matches('[data-lb="image"]') ? 'View' : 'Open'));
     }, { passive: true });
     document.documentElement.addEventListener('pointerleave', () => ring.classList.remove('is-on'));
   }
@@ -845,6 +845,318 @@
     });
   });
 
+  // Films wall: a tilted track of tall reel cards. Seamless drift that speeds up with scrolling,
+  // centre focus (live preview, travelling light ring, caption), pointer tilt, drag with inertia,
+  // keyboard and button control, rolling counter. Clones keep the loop endless.
+  $$('[data-fw]').forEach((wall) => {
+    const stage = $('[data-fw-stage]', wall);
+    const track = $('[data-fw-track]', wall);
+    const row = $('[data-fw-row]', wall);
+    const originals = $$('.fw__item', row);
+    if (!stage || !track || !row || originals.length < 4) return;
+    const N = originals.length;
+    const ghost = $('[data-fw-ghost]', wall);
+    const curEl = $('[data-fw-cur]', wall);
+    const prog = $('[data-fw-prog]', wall);
+    const toggle = $('[data-fw-toggle]', wall);
+    const previews = originals.map((li) => $('.fwc', li).dataset.preview);
+    const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+    const tilt = window.matchMedia('(max-width: 640px)').matches ? -5 : -7;
+
+    wall.classList.add('is-stage');
+    track.style.setProperty('--fw-tilt', `${tilt}deg`);
+
+    // Two extra sets: inert copies that forward their click to the real card
+    for (let c = 0; c < 2; c++) {
+      originals.forEach((li, i) => {
+        const copy = li.cloneNode(true);
+        copy.setAttribute('aria-hidden', 'true');
+        const b = $('button', copy);
+        const span = document.createElement('span');
+        span.className = `${b.className} is-clone`;
+        span.dataset.of = String(i);
+        span.append(...b.childNodes);
+        b.replaceWith(span);
+        row.append(copy);
+      });
+    }
+    const items = $$('.fw__item', row);
+    const cards = items.map((li, idx) => ({
+      li, el: $('.fwc', li), idx, orig: idx % N, cx: 0, cy: 0, d: 9, k: 0, tx: 0, ty: 0, hx: 0, hy: 0, hover: false,
+      live: false, video: null, p: 0, tryAt: 0,
+    }));
+    const byEl = new Map(cards.map((c) => [c.el, c]));
+
+    let W = 0; let H = 0; let setW = 1; let step = 1; let cos = 1; let sin = 0;
+    const measure = () => {
+      W = stage.clientWidth;
+      H = track.offsetHeight;
+      setW = Math.max(1, items[N].offsetLeft - items[0].offsetLeft);
+      step = Math.max(1, items[1].offsetLeft - items[0].offsetLeft);
+      const th = (tilt * Math.PI) / 180;
+      cos = Math.cos(th);
+      sin = Math.sin(th);
+      cards.forEach((c) => {
+        c.cx = c.li.offsetLeft + c.li.offsetWidth / 2;
+        c.cy = c.li.offsetTop + c.li.offsetHeight / 2;
+      });
+    };
+    measure();
+    let rz = 0;
+    window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(measure, 150); });
+
+    // State
+    let x = 0; let shift = 0; let rate = 0; let inertia = 0; let skew = 0;
+    let lastY = window.scrollY; let inView = false; let hovering = false; let dragging = false;
+    let focusPause = false; let userPaused = false; let focusIdx = -1; let focusOrig = -1; let swallow = false; let wasMotion = true;
+    const BASE = 42; // px per second
+
+    const project = () => {
+      for (const c of cards) {
+        const px = c.cx + x - W / 2;
+        const py = c.cy - H / 2;
+        c.d = (px * cos - py * sin) / (W / 2);
+      }
+    };
+
+    const setLive = (c, on) => {
+      if (c.live === on) return;
+      c.live = on;
+      if (on) {
+        if (!c.video) {
+          const v = document.createElement('video');
+          Object.assign(v, { muted: true, loop: true, playsInline: true, preload: 'auto', src: previews[c.orig] });
+          v.setAttribute('aria-hidden', 'true');
+          v.tabIndex = -1;
+          v.addEventListener('playing', () => v.classList.add('is-playing'));
+          $('.fwc__media', c.el).append(v);
+          c.video = v;
+        }
+        if (motionAllowed() && !userPaused) c.video.play().catch(() => {});
+      } else if (c.video) {
+        c.video.pause();
+        c.video.classList.remove('is-playing');
+        c.p = 0;
+        c.el.style.setProperty('--p', '0');
+      }
+    };
+
+    const pad = (n) => String(n + 1).padStart(2, '0');
+    const setCounter = (o) => {
+      const b = $('b', curEl);
+      if (!b) return;
+      gsap.killTweensOf(b);
+      gsap.to(b, {
+        yPercent: -100, duration: 0.22, ease: 'power2.in',
+        onComplete: () => { b.textContent = pad(o); gsap.fromTo(b, { yPercent: 100 }, { yPercent: 0, duration: 0.55, ease: 'power3.out' }); },
+      });
+    };
+
+    const frame = (_t, ms) => {
+      const sy = window.scrollY;
+      const dy = sy - lastY;
+      lastY = sy;
+      if (!inView) return;
+      const dt = Math.min(ms, 64) / 1000;
+      const lbOpen = !!(lb && lb.open);
+      const moving = motionAllowed() && !userPaused && !document.hidden;
+      const target = moving && !focusPause && !dragging && !lbOpen ? (hovering ? 0.1 : 1) : 0;
+      rate += (target - rate) * Math.min(1, dt * 3.2);
+      x -= BASE * rate * dt;
+      x -= dy * 0.6;
+      if (inertia) {
+        x += inertia * dt;
+        inertia *= Math.exp(-dt * 3.2);
+        if (Math.abs(inertia) < 8) inertia = 0;
+      }
+      if (shift) {
+        const part = shift * (1 - Math.exp(-dt * 7));
+        x += part;
+        shift -= part;
+        if (Math.abs(shift) < 0.3) { x += shift; shift = 0; }
+      }
+      x %= setW;
+      if (x > 0) x -= setW;
+      row.style.transform = `translate3d(${x.toFixed(2)}px,0,0)`;
+      skew += (clamp(-dy * 0.22, -6, 6) - skew) * Math.min(1, dt * 6);
+      track.style.setProperty('--fw-skew', `${skew.toFixed(2)}deg`);
+      if (prog) prog.style.transform = `scaleX(${(-x / setW).toFixed(3)})`;
+      project();
+
+      let best = null;
+      let bestD = 9;
+      for (const c of cards) {
+        const ad = Math.abs(c.d);
+        if (ad > 1.3) { if (c.live) setLive(c, false); continue; }
+        const k = Math.pow(1 - clamp(ad / 0.9, 0, 1), 1.4);
+        c.k = k;
+        c.hx += (c.tx - c.hx) * Math.min(1, dt * 9);
+        c.hy += (c.ty - c.hy) * Math.min(1, dt * 9);
+        const ry = clamp(c.d, -1.2, 1.2) * -13 + c.hx * 12;
+        const rx = c.hy * -10;
+        const sc = 0.9 + 0.17 * k + (c.hover ? 0.05 : 0);
+        const lift = c.d * c.d * 26 - k * 10;
+        c.el.style.transform = `perspective(900px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) translate3d(0,${lift.toFixed(1)}px,0) scale(${sc.toFixed(3)})`;
+        c.el.style.setProperty('--k', k.toFixed(3));
+        if (ad < bestD) { bestD = ad; best = c; }
+        setLive(c, ad < 0.78);
+        const v = c.video;
+        if (c.live && v) {
+          if (moving && !lbOpen && v.paused && ms && performance.now() > c.tryAt) { c.tryAt = performance.now() + 600; v.play().catch(() => {}); }
+          if (v.duration) {
+            const p = v.currentTime / v.duration;
+            if (Math.abs(p - c.p) > 0.004) { c.p = p; c.el.style.setProperty('--p', p.toFixed(3)); }
+          }
+        }
+      }
+      if (wasMotion !== moving) {
+        wasMotion = moving;
+        cards.forEach((c) => { if (c.video) { if (moving && c.live) c.video.play().catch(() => {}); else c.video.pause(); } });
+      }
+      if (best && best.idx !== focusIdx) {
+        if (focusIdx > -1) cards[focusIdx].el.classList.remove('is-focus');
+        best.el.classList.add('is-focus');
+        focusIdx = best.idx;
+        if (best.orig !== focusOrig) { focusOrig = best.orig; setCounter(best.orig); }
+      }
+    };
+    gsap.ticker.add(frame);
+    ST.create({
+      trigger: wall, start: 'top bottom', end: 'bottom top',
+      onToggle: (self) => { inView = self.isActive; if (!inView) cards.forEach((c) => setLive(c, false)); },
+    });
+    project();
+
+    // Pointer: tilt + glare on the card under the cursor; the wall slows while you look
+    cards.forEach((c) => {
+      c.el.addEventListener('pointerenter', (e) => {
+        if (e.pointerType !== 'mouse' || dragging) return;
+        c.hover = true;
+        c.el.classList.add('is-hover');
+        row.classList.add('is-hovering');
+        hovering = true;
+      });
+      c.el.addEventListener('pointermove', (e) => {
+        if (!c.hover) return;
+        const r = c.el.getBoundingClientRect();
+        const nx = clamp((e.clientX - r.left) / r.width, 0, 1);
+        const ny = clamp((e.clientY - r.top) / r.height, 0, 1);
+        c.tx = nx * 2 - 1;
+        c.ty = ny * 2 - 1;
+        c.el.style.setProperty('--gx', `${(nx * 100).toFixed(1)}%`);
+        c.el.style.setProperty('--gy', `${(ny * 100).toFixed(1)}%`);
+      });
+      c.el.addEventListener('pointerleave', () => {
+        c.hover = false;
+        c.tx = 0;
+        c.ty = 0;
+        c.el.classList.remove('is-hover');
+        hovering = !!$('.fwc.is-hover', row);
+        row.classList.toggle('is-hovering', hovering);
+      });
+    });
+    if (finePointer.matches) {
+      wall.addEventListener('pointermove', (e) => {
+        const r = wall.getBoundingClientRect();
+        wall.style.setProperty('--mx', ((e.clientX - r.left) / r.width - 0.5).toFixed(3));
+        wall.style.setProperty('--my', ((e.clientY - r.top) / r.height - 0.5).toFixed(3));
+      }, { passive: true });
+    }
+
+    // Drag with inertia (mouse and touch); a drag never opens a reel
+    let drag = null;
+    stage.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      drag = { id: e.pointerId, last: e.clientX, t: performance.now(), v: 0, moved: 0 };
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const dx = e.clientX - drag.last;
+      drag.moved += Math.abs(dx);
+      if (!dragging && drag.moved > 6) {
+        dragging = true;
+        inertia = 0;
+        stage.classList.add('is-dragging');
+        try { stage.setPointerCapture(e.pointerId); } catch (err) { /* pointer already gone */ }
+      }
+      const now = performance.now();
+      if (dragging) {
+        drag.v = drag.v * 0.7 + (dx / Math.max(1, now - drag.t)) * 1000 * 0.3;
+        x += dx;
+      }
+      drag.t = now;
+      drag.last = e.clientX;
+    });
+    const endDrag = (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      if (dragging) {
+        inertia = clamp(drag.v, -2600, 2600);
+        dragging = false;
+        stage.classList.remove('is-dragging');
+        swallow = true;
+        setTimeout(() => { swallow = false; }, 0);
+      }
+      drag = null;
+    };
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', endDrag);
+    stage.addEventListener('click', (e) => { if (swallow) { e.preventDefault(); e.stopPropagation(); } }, true);
+    stage.addEventListener('wheel', (e) => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) x -= e.deltaX; }, { passive: true });
+    row.addEventListener('click', (e) => {
+      const copy = e.target.closest('.fwc[data-of]');
+      if (!copy) return;
+      e.preventDefault();
+      $('.fwc', originals[Number(copy.dataset.of)]).click();
+    });
+
+    // Buttons and keyboard
+    $('[data-fw-prev]', wall)?.addEventListener('click', () => { shift += step; });
+    $('[data-fw-next]', wall)?.addEventListener('click', () => { shift -= step; });
+    toggle?.addEventListener('click', () => {
+      userPaused = !userPaused;
+      toggle.setAttribute('aria-pressed', String(userPaused));
+      toggle.setAttribute('aria-label', userPaused ? 'Resume the moving reels' : 'Pause the moving reels');
+    });
+    row.addEventListener('focusin', (e) => {
+      const el = e.target.closest('.fwc');
+      if (!el || el.dataset.of) return;
+      focusPause = true;
+      stage.scrollLeft = 0;
+      const base = byEl.get(el).orig;
+      project();
+      const nearest = [base, base + N, base + 2 * N].map((i) => cards[i]).sort((a, b) => Math.abs(a.d) - Math.abs(b.d))[0];
+      shift = (-nearest.d * (W / 2)) / cos;
+    });
+    row.addEventListener('focusout', () => { setTimeout(() => { if (!row.contains(document.activeElement)) focusPause = false; }, 0); });
+    row.addEventListener('keydown', (e) => {
+      const el = e.target.closest('.fwc');
+      if (!el || (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft')) return;
+      e.preventDefault();
+      const o = byEl.get(el).orig + (e.key === 'ArrowRight' ? 1 : -1);
+      $('.fwc', originals[(o + N) % N]).focus({ preventScroll: true });
+    });
+
+    // Scroll-driven extras: the ghost word slides, the cards fly in once, tilt swings into place
+    if (ghost) {
+      gsap.fromTo(ghost, { xPercent: 4 }, { xPercent: -16, ease: 'none', scrollTrigger: { trigger: wall, start: 'top bottom', end: 'bottom top', scrub: true } });
+    }
+    if (stage.getBoundingClientRect().top > window.innerHeight * 0.82) {
+      const sorted = cards.slice().sort((a, b) => Math.abs(a.d) - Math.abs(b.d));
+      const seen = sorted.filter((c) => Math.abs(c.d) < 1.3).map((c) => c.li);
+      const rest = sorted.filter((c) => Math.abs(c.d) >= 1.3).map((c) => c.li);
+      gsap.set(items, { '--in': 0 });
+      track.style.setProperty('--fw-tilt', '0deg');
+      ST.create({
+        trigger: stage, start: 'top 82%', once: true,
+        onEnter: () => {
+          gsap.set(rest, { '--in': 1 });
+          gsap.to(seen, { '--in': 1, duration: 1.4, stagger: 0.09, ease: 'power3.out' });
+          gsap.to(track, { '--fw-tilt': `${tilt}deg`, duration: 1.8, ease: 'power3.out' });
+        },
+      });
+    }
+  });
+
   // Safety net: when the animation clock barely runs (background tab, throttled preview,
   // struggling device), finish the opening animations so the first screen is never blank
   const startFrame = gsap.ticker.frame;
@@ -852,6 +1164,8 @@
     intros.forEach((tl) => tl.progress(1));
     if (gsap.ticker.frame - startFrame > 60) return;
     const onScreen = (el) => { const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; };
+    $$('.fw__item').forEach((li) => li.style.setProperty('--in', '1'));
+    $$('[data-fw-track]').forEach((t) => t.style.setProperty('--fw-tilt', `${window.matchMedia('(max-width: 640px)').matches ? -5 : -7}deg`));
     $$('[data-split]').filter(onScreen).forEach((el) => gsap.set($$('.wi', el), { yPercent: 0 }));
     $$('[data-reveal]').filter(onScreen).forEach((el) => {
       el.dataset.shown = '';

@@ -1960,3 +1960,171 @@ html.is-paused .phero__bg img, html.is-paused .phero__frame, html.is-paused .phe
   .hero__cats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hpill { min-width: 0; }
 }
+
+/* ==========================================================================
+   Films wall — tall reel cards on a tilted, drifting track
+   Default = a plain scrolling row of cards (no JS / reduced motion).
+   .is-stage (added by the motion script) = the tilted, animated wall.
+   ========================================================================== */
+.chap--films.fw {
+  --fw-w: clamp(150px, 19vw, 280px);
+  --fw-h: calc(var(--fw-w) * 16 / 9);
+  --fw-gap: clamp(14px, 1.8vw, 26px);
+  position: relative;
+  isolation: isolate;
+  color: var(--on-dark);
+  padding-bottom: clamp(2rem, 4vw, 4rem);
+  background:
+    radial-gradient(110% 80% at 88% -10%, rgba(227, 43, 142, 0.3), transparent 58%),
+    radial-gradient(90% 70% at -5% 105%, rgba(194, 55, 136, 0.26), transparent 62%),
+    linear-gradient(165deg, #5b2e50 0%, #4a2440 48%, #3b1b34 100%);
+}
+.fw .chap__title { color: var(--on-dark); }
+.fw .chap__num { color: var(--hm-pink-soft); }
+.fw .link-arrow { color: var(--on-dark); }
+.fw .link-arrow:hover { color: var(--hm-pink-soft); }
+
+/* Background: outlined ghost word + two slow glows */
+.fw__ghost {
+  position: absolute; left: -2vw; top: clamp(0.5rem, 3vw, 3rem); z-index: -1;
+  font-family: var(--serif); font-style: italic; font-size: clamp(7rem, 25vw, 23rem); line-height: 0.8;
+  color: transparent; -webkit-text-stroke: 1px rgba(246, 240, 234, 0.15);
+  pointer-events: none; user-select: none; white-space: nowrap;
+}
+.fw__glow { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.fw__glow i {
+  position: absolute; width: 46vw; height: 46vw; border-radius: 50%; filter: blur(70px);
+  translate: calc(var(--mx, 0) * 50px) calc(var(--my, 0) * 36px); transition: translate 1.4s var(--ease-out);
+}
+.fw__glow i:nth-child(1) { left: 8%; top: 28%; background: rgba(227, 43, 142, 0.34); animation: fw-float 17s ease-in-out infinite alternate; }
+.fw__glow i:nth-child(2) { right: -6%; top: 40%; background: rgba(246, 160, 200, 0.2); animation: fw-float 23s ease-in-out infinite alternate-reverse; }
+@keyframes fw-float { from { transform: translate3d(0, 0, 0) scale(1); } to { transform: translate3d(6vw, -5vw, 0) scale(1.18); } }
+
+/* Header: overview film pill */
+.fw__film {
+  display: inline-flex; align-items: center; gap: 0.7rem; min-height: 2.75rem; padding: 0.35rem 1.1rem 0.35rem 0.4rem;
+  border: 1px solid rgba(246, 240, 234, 0.34); border-radius: 999px; background: rgba(246, 240, 234, 0.08);
+  color: var(--on-dark); font: inherit; font-size: 0.875rem; font-weight: 500; cursor: pointer;
+  backdrop-filter: blur(8px); transition: background-color 0.4s, border-color 0.4s, transform 0.5s var(--ease-out);
+}
+.fw__film-icon { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: linear-gradient(120deg, var(--hm-pink), var(--hm-magenta)); color: #fff; transition: transform 0.5s var(--ease-out); }
+.fw__film-icon .icon { margin-left: 2px; }
+.fw__film-dur { font-variant-numeric: tabular-nums; opacity: 0.65; }
+.fw__film:hover, .fw__film:focus-visible { background: rgba(246, 240, 234, 0.16); border-color: rgba(246, 240, 234, 0.6); transform: translateY(-2px); }
+.fw__film:hover .fw__film-icon { transform: scale(1.12); }
+
+/* Static row (default) */
+.fw__stage { position: relative; margin-top: clamp(0.5rem, 2vw, 1.5rem); }
+.fw__row {
+  display: flex; gap: var(--fw-gap); margin: 0; padding: 1rem var(--gutter) 2rem; list-style: none;
+  overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: thin; scrollbar-color: rgba(246, 240, 234, 0.4) transparent;
+}
+.fw__item { flex: 0 0 auto; scroll-snap-align: start; }
+
+/* Card */
+.fwc {
+  position: relative; display: block; width: var(--fw-w); height: var(--fw-h); padding: 0; border: 0;
+  border-radius: clamp(18px, 2vw, 28px); overflow: hidden; background: #3b1b34; color: #fff; text-align: left; font: inherit; cursor: pointer;
+  box-shadow: 0 40px 70px -42px rgba(20, 6, 16, 0.75); outline: 1px solid rgba(246, 240, 234, 0.18); outline-offset: -1px;
+  transition: box-shadow 0.6s var(--ease-out), outline-color 0.5s;
+  -webkit-tap-highlight-color: transparent;
+}
+.fwc:focus-visible { outline: 2px solid var(--hm-pink-soft); outline-offset: 3px; }
+.fwc__media, .fwc__media picture, .fwc__media img, .fwc__media video { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.fwc__media img, .fwc__media video { object-fit: cover; }
+.fwc__media img { animation: fw-kb 16s ease-in-out infinite alternate; }
+.fw__item:nth-child(3n) .fwc__media img { animation-duration: 20s; animation-direction: alternate-reverse; }
+.fwc__media video { opacity: 0; transition: opacity 0.8s; }
+.fwc__media video.is-playing { opacity: 1; }
+@keyframes fw-kb { from { transform: scale(1.02) translate3d(0, 0, 0); } to { transform: scale(1.14) translate3d(-2%, -2%, 0); } }
+.fwc__scrim { position: absolute; inset: 0; background: linear-gradient(rgba(42, 18, 34, 0.55) 0%, rgba(42, 18, 34, 0) 26%, rgba(42, 18, 34, 0) 50%, rgba(42, 18, 34, 0.9) 100%); }
+.fwc__dim { position: absolute; inset: 0; background: #3b1b34; opacity: calc((1 - var(--k, 1)) * 0.55); pointer-events: none; }
+.fwc__glare { position: absolute; inset: 0; opacity: 0; pointer-events: none; mix-blend-mode: soft-light; background: radial-gradient(circle at var(--gx, 50%) var(--gy, 30%), rgba(255, 255, 255, 0.75), transparent 52%); transition: opacity 0.5s; }
+.fwc.is-hover .fwc__glare { opacity: 1; }
+
+.fwc__top { position: absolute; left: 0.9rem; right: 0.9rem; top: 0.9rem; display: flex; align-items: center; justify-content: space-between; }
+.fwc__chip {
+  display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.3rem 0.65rem 0.3rem 0.5rem; border-radius: 999px;
+  background: linear-gradient(120deg, var(--hm-pink), var(--hm-magenta)); color: #fff; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+}
+.fwc__chip .icon { width: 0.7rem; height: 0.7rem; }
+.fwc__n { font-family: var(--serif); font-size: 0.9rem; letter-spacing: 0.08em; color: var(--hm-pink-soft); font-variant-numeric: tabular-nums; }
+
+.fwc__play {
+  position: absolute; left: 50%; top: 50%; display: grid; place-items: center; width: 3.5rem; height: 3.5rem; margin: -1.75rem 0 0 -1.75rem; border-radius: 50%;
+  background: rgba(246, 240, 234, 0.18); backdrop-filter: blur(10px); box-shadow: inset 0 0 0 1px rgba(246, 240, 234, 0.45);
+  opacity: 0; transform: scale(0.6); transition: opacity 0.45s, transform 0.6s var(--ease-out), background-color 0.4s;
+}
+.fwc__play .icon { width: 1.25rem; height: 1.25rem; margin-left: 2px; }
+.fwc__play::after { content: ''; position: absolute; inset: -0.4rem; border-radius: 50%; border: 1px solid rgba(246, 240, 234, 0.5); animation: fw-ping 2.2s ease-out infinite; }
+@keyframes fw-ping { from { transform: scale(0.85); opacity: 0.9; } to { transform: scale(1.5); opacity: 0; } }
+.fwc.is-focus .fwc__play, .fwc:hover .fwc__play, .fwc:focus-visible .fwc__play { opacity: 1; transform: scale(1); }
+.fwc:hover .fwc__play { background: var(--hm-magenta); box-shadow: none; }
+
+.fwc__cap { position: absolute; left: 1rem; right: 1rem; bottom: 1.6rem; display: grid; gap: 0.2rem; opacity: 0; transform: translateY(14px); transition: opacity 0.5s, transform 0.7s var(--ease-out); }
+.fwc__t { font-family: var(--serif); font-size: clamp(1.05rem, 1rem + 0.45vw, 1.4rem); line-height: 1.12; text-wrap: balance; }
+.fwc__s { font-size: 0.75rem; color: rgba(246, 240, 234, 0.78); }
+.fwc.is-focus .fwc__cap, .fwc:hover .fwc__cap, .fwc:focus-visible .fwc__cap { opacity: 1; transform: none; }
+.fwc__bar { position: absolute; left: 1rem; right: 1rem; bottom: 0.8rem; height: 2px; border-radius: 2px; background: rgba(246, 240, 234, 0.28); overflow: hidden; }
+.fwc__bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--hm-pink-soft), #fff); transform: scaleX(var(--p, 0)); transform-origin: left center; }
+
+/* Focus ring: a light that travels round the centred card */
+@property --fw-ang { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+.fwc::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 2px; pointer-events: none; opacity: 0; transition: opacity 0.6s;
+  background: conic-gradient(from var(--fw-ang), transparent 0 52%, rgba(246, 160, 200, 0.95) 80%, #fff 92%, transparent 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: fw-spin 3.6s linear infinite;
+}
+.fwc.is-focus::after { opacity: 1; }
+@keyframes fw-spin { to { --fw-ang: 360deg; } }
+
+/* Footer: rolling counter, loop progress, controls */
+.fw__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; margin-top: clamp(0.5rem, 2vw, 1.5rem); }
+.fw__count { display: inline-flex; align-items: baseline; gap: 0.75rem; font-family: var(--serif); font-variant-numeric: tabular-nums; }
+.fw__cur { display: inline-block; height: 1.1em; overflow: hidden; font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.5rem); line-height: 1.1; color: var(--on-dark); }
+.fw__cur b { display: block; font-weight: 500; }
+.fw__sep { width: 2rem; height: 1px; background: rgba(246, 240, 234, 0.4); align-self: center; }
+.fw__tot { font-size: 0.95rem; color: var(--on-dark-muted); }
+.fw__prog { flex: 1 1 8rem; height: 2px; border-radius: 2px; background: rgba(246, 240, 234, 0.2); overflow: hidden; }
+.fw__prog i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, var(--hm-pink-soft), #fff); transform: scaleX(0); transform-origin: left center; }
+.fw__ctrl { display: flex; gap: 0.6rem; }
+.fw .rail__btn { border-color: rgba(246, 240, 234, 0.4); color: var(--on-dark); }
+.fw .rail__btn:hover:not(:disabled), .fw .rail__btn:focus-visible:not(:disabled) { background: var(--on-dark); color: #4a2440; }
+.fw__toggle .icon--play { display: none; }
+.fw__toggle[aria-pressed='true'] .icon--pause { display: none; }
+.fw__toggle[aria-pressed='true'] .icon--play { display: block; }
+
+/* Counter and controls only make sense once the wall is running */
+.fw:not(.is-stage) .fw__foot { display: none; }
+
+/* ---- The wall (JS adds .is-stage) ---- */
+.fw.is-stage .fw__stage { height: calc(var(--fw-h) + 21vw); overflow: hidden; touch-action: pan-y; cursor: grab; perspective: none; }
+.fw.is-stage .fw__stage.is-dragging { cursor: grabbing; }
+.fw.is-stage .fw__track {
+  position: absolute; left: 0; top: 50%; width: 100%; margin-top: calc(var(--fw-h) / -2);
+  transform: rotate(var(--fw-tilt, -7deg)) skewX(var(--fw-skew, 0deg)); transform-origin: 50% 50%; will-change: transform;
+}
+.fw.is-stage .fw__row { width: max-content; align-items: flex-start; padding: 0; overflow: visible; scroll-snap-type: none; will-change: transform; }
+.fw.is-stage .fw__item { opacity: var(--in, 1); translate: 0 calc((1 - var(--in, 1)) * 130px); rotate: calc((1 - var(--in, 1)) * 5deg); }
+.fw.is-stage .fw__item.is-low { margin-top: clamp(14px, 2vw, 30px); }
+.fw.is-stage .fwc { will-change: transform; }
+.fw.is-stage .fw__row.is-hovering .fwc:not(.is-hover) { box-shadow: 0 30px 60px -44px rgba(20, 6, 16, 0.6); }
+.fw.is-stage .fwc.is-focus { box-shadow: 0 50px 90px -40px rgba(227, 43, 142, 0.6); outline-color: rgba(246, 160, 200, 0.7); }
+.fw.is-stage .fwc.is-clone { cursor: pointer; }
+
+@media (max-width: 900px) {
+  .chap--films.fw { --fw-w: clamp(150px, 30vw, 230px); }
+  .fw.is-stage .fw__stage { height: calc(var(--fw-h) + 26vw); }
+}
+@media (max-width: 640px) {
+  .chap--films.fw { --fw-w: 44vw; }
+  .fw.is-stage .fw__stage { height: calc(var(--fw-h) + 34vw); }
+  .fwc__top { left: 0.65rem; right: 0.65rem; top: 0.65rem; }
+  .fwc__cap { left: 0.75rem; right: 0.75rem; }
+  .fwc__bar { left: 0.75rem; right: 0.75rem; }
+  .fw__prog { order: 3; flex-basis: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fwc__media img, .fw__glow i, .fwc::after, .fwc__play::after { animation: none; }
+}

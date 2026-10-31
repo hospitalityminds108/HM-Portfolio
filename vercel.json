@@ -132,12 +132,12 @@
     },
     {
       "source": "/video-production/food-restaurant-reels",
-      "destination": "/video-production/food-restaurant/",
+      "destination": "/video-production/transitions/",
       "permanent": true
     },
     {
       "source": "/video-production/food-restaurant-reels/",
-      "destination": "/video-production/food-restaurant/",
+      "destination": "/video-production/transitions/",
       "permanent": true
     },
     {
@@ -258,6 +258,16 @@
     {
       "source": "/creatives/branding/",
       "destination": "/creatives/hotel-rooms/",
+      "permanent": true
+    },
+    {
+      "source": "/video-production/food-restaurant",
+      "destination": "/video-production/transitions/",
+      "permanent": true
+    },
+    {
+      "source": "/video-production/food-restaurant/",
+      "destination": "/video-production/transitions/",
       "permanent": true
     }
   ]

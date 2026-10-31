@@ -23,7 +23,7 @@ AddDefaultCharset utf-8
   # Permanent redirects from the previous WordPress URLs
   RewriteRule ^hotel-reels/?$                /video-production/                        [R=301,L]
   RewriteRule ^influencer-reels/?$           /video-production/influencers/            [R=301,L]
-  RewriteRule ^food-and-restaurant-reels/?$  /video-production/food-restaurant/                        [R=301,L]
+  RewriteRule ^food-and-restaurant-reels/?$  /video-production/transitions/                        [R=301,L]
   RewriteRule ^banquet-reels/?$              /video-production/                        [R=301,L]
   RewriteRule ^walkthrough/?$                /video-production/                        [R=301,L]
   RewriteRule ^property-tour/?$              /video-production/                        [R=301,L]
@@ -42,7 +42,8 @@ AddDefaultCharset utf-8
   RewriteRule ^contact-us/?$                 /contact/                                 [R=301,L]
   RewriteRule ^(portfolio|work)(/.*)?$ /                          [R=301,L]
   RewriteRule ^video-production/(hotel-reels|wedding-banquet-films|hotel-walkthroughs|hotel-overview-films|behind-the-scenes|review-films)/?$ /video-production/ [R=301,L]
-  RewriteRule ^video-production/food-restaurant-reels/?$ /video-production/food-restaurant/ [R=301,L]
+  RewriteRule ^video-production/food-restaurant-reels/?$ /video-production/transitions/ [R=301,L]
+  RewriteRule ^video-production/food-restaurant/?$ /video-production/transitions/ [R=301,L]
   RewriteRule ^video-production/influencer-reels/?$ /video-production/influencers/ [R=301,L]
 
   RewriteRule ^creatives/social-media/?$ /creatives/trends/ [R=301,L]

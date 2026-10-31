@@ -2174,3 +2174,20 @@ html.is-paused .phero__bg img, html.is-paused .phero__frame, html.is-paused .phe
 .gallery .collage__item[hidden] { display: none; }
 .gallery .collage__btn { height: 100%; }
 .gallery .collage__btn picture, .gallery .collage__btn img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* Category tiles: equal widths, an unfinished last row is centred instead of leaving a gap */
+.tiles { --tg: clamp(1rem, 2vw, 1.75rem); --tc: 1; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--tg); }
+.tiles > .tile { flex: 0 0 calc((100% - (var(--tc) - 1) * var(--tg)) / var(--tc)); min-width: 0; }
+@media (min-width: 560px) { .tiles { --tc: 2; } }
+@media (min-width: 860px) { .tiles { --tc: 3; } }
+@media (min-width: 1100px) { .tiles { --tc: 4; } }
+
+/* Photo and reel grids: straight rows of same-size cards; an unfinished last row is centred */
+.gallery, .video-grid:not(.video-grid--landscape) { --gc: 1; --gg: clamp(0.75rem, 1.5vw, 1.25rem); display: flex; flex-wrap: wrap; justify-content: center; gap: var(--gg); }
+.gallery > *, .video-grid:not(.video-grid--landscape) > * { flex: 0 0 calc((100% - (var(--gc) - 1) * var(--gg)) / var(--gc)); min-width: 0; }
+@media (min-width: 600px) { .gallery { --gc: 2; } }
+@media (min-width: 1000px) { .gallery { --gc: 3; } }
+.video-grid:not(.video-grid--landscape) { --gc: 2; --gg: clamp(1.25rem, 2vw, 2rem); }
+@media (min-width: 760px) { .video-grid:not(.video-grid--landscape) { --gc: 3; } }
+@media (min-width: 1100px) { .video-grid:not(.video-grid--landscape) { --gc: 4; } }
+.video-grid .reel { translate: none; }

@@ -189,6 +189,76 @@
       "source": "/video-production/review-films/",
       "destination": "/video-production/",
       "permanent": true
+    },
+    {
+      "source": "/creatives/social-media",
+      "destination": "/creatives/trends/",
+      "permanent": true
+    },
+    {
+      "source": "/creatives/social-media/",
+      "destination": "/creatives/trends/",
+      "permanent": true
+    },
+    {
+      "source": "/creatives/promotional-campaigns",
+      "destination": "/creatives/offers/",
+      "permanent": true
+    },
+    {
+      "source": "/creatives/promotional-campaigns/",
+      "destination": "/creatives/offers/",
+      "permanent": true
+    },
+    {
+      "source": "/creatives/digital-ads",
+      "destination": "/creatives/",
+      "permanent": true
+    },
+    {
+      "source": "/creatives/digital-ads/",
+      "destination": "/creatives/",
+      "permanent": true
+    },
+    {
+      "source": "/creatives/restaurant-campaigns",
+      "destination": "/creatives/restaurant/",
+      "permanent": true
+    },
+    {
+      "source": "/creatives/restaurant-campaigns/",
+      "destination": "/creatives/restaurant/",
+      "permanent": true
+    },
+    {
+      "source": "/creatives/weddings-events",
+      "destination": "/creatives/weddings/",
+      "permanent": true
+    },
+    {
+      "source": "/creatives/weddings-events/",
+      "destination": "/creatives/weddings/",
+      "permanent": true
+    },
+    {
+      "source": "/creatives/seasonal-festive",
+      "destination": "/creatives/offers/",
+      "permanent": true
+    },
+    {
+      "source": "/creatives/seasonal-festive/",
+      "destination": "/creatives/offers/",
+      "permanent": true
+    },
+    {
+      "source": "/creatives/branding",
+      "destination": "/creatives/hotel-rooms/",
+      "permanent": true
+    },
+    {
+      "source": "/creatives/branding/",
+      "destination": "/creatives/hotel-rooms/",
+      "permanent": true
     }
   ]
 }

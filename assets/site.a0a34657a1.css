@@ -2191,3 +2191,8 @@ html.is-paused .phero__bg img, html.is-paused .phero__frame, html.is-paused .phe
 @media (min-width: 760px) { .video-grid:not(.video-grid--landscape) { --gc: 3; } }
 @media (min-width: 1100px) { .video-grid:not(.video-grid--landscape) { --gc: 4; } }
 .video-grid .reel { translate: none; }
+
+/* Portrait photos: keep faces in frame in the 3:2 grid; a portrait-only gallery uses tall boxes */
+.gallery .is-portrait img { object-position: 50% 28%; }
+.gallery.gallery--portrait .collage__item { aspect-ratio: 2 / 3; }
+.gallery.gallery--portrait .is-portrait img { object-position: 50% 50%; }

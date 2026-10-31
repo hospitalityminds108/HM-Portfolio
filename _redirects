@@ -1,7 +1,7 @@
 # Redirects for Netlify / Cloudflare Pages (ignored by Apache, which uses .htaccess)
-/hotel-reels                /video-production/                        301
+/hotel-reels                /video-production/hotel-rooms/                        301
 /influencer-reels           /video-production/influencers/            301
-/food-and-restaurant-reels  /video-production/transitions/           301
+/food-and-restaurant-reels  /video-production/food/           301
 /banquet-reels              /video-production/                        301
 /walkthrough                /video-production/                        301
 /property-tour              /video-production/                        301
@@ -21,10 +21,10 @@
 /portfolio                  /                                         301
 /portfolio/*                /                                         301
 /work/*                     /                                         301
-/video-production/hotel-reels /video-production/                        301
+/video-production/hotel-reels /video-production/hotel-rooms/                        301
 /video-production/influencer-reels /video-production/influencers/            301
-/video-production/food-restaurant-reels /video-production/transitions/           301
-/video-production/wedding-banquet-films /video-production/                        301
+/video-production/food-restaurant-reels /video-production/food/           301
+/video-production/wedding-banquet-films /video-production/weddings/                        301
 /video-production/hotel-walkthroughs /video-production/                        301
 /video-production/hotel-overview-films /video-production/                        301
 /video-production/behind-the-scenes /video-production/                        301
@@ -36,4 +36,4 @@
 /creatives/weddings-events  /creatives/weddings/                      301
 /creatives/seasonal-festive /creatives/offers/                        301
 /creatives/branding         /creatives/hotel-rooms/                   301
-/video-production/food-restaurant /video-production/transitions/            301
+/video-production/food-restaurant /video-production/food/            301

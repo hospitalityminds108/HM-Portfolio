@@ -112,12 +112,12 @@
     },
     {
       "source": "/video-production/hotel-reels",
-      "destination": "/video-production/",
+      "destination": "/video-production/hotel-rooms/",
       "permanent": true
     },
     {
       "source": "/video-production/hotel-reels/",
-      "destination": "/video-production/",
+      "destination": "/video-production/hotel-rooms/",
       "permanent": true
     },
     {
@@ -132,22 +132,22 @@
     },
     {
       "source": "/video-production/food-restaurant-reels",
-      "destination": "/video-production/transitions/",
+      "destination": "/video-production/food/",
       "permanent": true
     },
     {
       "source": "/video-production/food-restaurant-reels/",
-      "destination": "/video-production/transitions/",
+      "destination": "/video-production/food/",
       "permanent": true
     },
     {
       "source": "/video-production/wedding-banquet-films",
-      "destination": "/video-production/",
+      "destination": "/video-production/weddings/",
       "permanent": true
     },
     {
       "source": "/video-production/wedding-banquet-films/",
-      "destination": "/video-production/",
+      "destination": "/video-production/weddings/",
       "permanent": true
     },
     {
@@ -262,12 +262,12 @@
     },
     {
       "source": "/video-production/food-restaurant",
-      "destination": "/video-production/transitions/",
+      "destination": "/video-production/food/",
       "permanent": true
     },
     {
       "source": "/video-production/food-restaurant/",
-      "destination": "/video-production/transitions/",
+      "destination": "/video-production/food/",
       "permanent": true
     }
   ]

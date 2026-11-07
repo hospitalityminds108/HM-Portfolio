@@ -162,12 +162,12 @@
     },
     {
       "source": "/video-production/hotel-overview-films",
-      "destination": "/video-production/",
+      "destination": "/films/",
       "permanent": true
     },
     {
       "source": "/video-production/hotel-overview-films/",
-      "destination": "/video-production/",
+      "destination": "/films/",
       "permanent": true
     },
     {
@@ -182,12 +182,12 @@
     },
     {
       "source": "/video-production/review-films",
-      "destination": "/video-production/",
+      "destination": "/films/",
       "permanent": true
     },
     {
       "source": "/video-production/review-films/",
-      "destination": "/video-production/",
+      "destination": "/films/",
       "permanent": true
     },
     {

@@ -51,16 +51,41 @@
 
   const vars = { controls: 0, disablekb: 1, fs: 0, rel: 0, modestbranding: 1, playsinline: 1, iv_load_policy: 3, cc_load_policy: 0, autoplay: 1, origin: location.origin };
 
+  // YouTube refuses some films on the privacy host (e.g. claimed music): retry on youtube.com, then offer a link
+  const HOSTS = ['https://www.youtube-nocookie.com', 'https://www.youtube.com'];
+  let hostIdx = 0;
+  const retried = new Set();
+  const fallback = document.createElement('div');
+  fallback.className = 'cinema__fallback';
+  fallback.innerHTML = '<p>This film can’t play here.</p><a class="btn" target="_blank" rel="noopener">Watch on YouTube</a>';
+  frame.appendChild(fallback);
+  const onError = () => {
+    const id = film(index).dataset.film;
+    if (!retried.has(id) && hostIdx === 0) {
+      retried.add(id);
+      hostIdx = 1;
+      try { player.destroy(); } catch (e) { /* gone */ }
+      player = null; ready = false; host.innerHTML = '';
+      wantPlay = true;
+      createPlayer(id).then(() => { if (wantPlay) player.loadVideoById(id); });
+      return;
+    }
+    stopTick();
+    fallback.querySelector('a').href = `https://www.youtube.com/watch?v=${id}`;
+    stage.dataset.state = 'error';
+  };
+
   const createPlayer = (id) => loadApi().then((YT) => new Promise((resolve) => {
     const mount = document.createElement('div');
     host.appendChild(mount);
     player = new YT.Player(mount, {
-      host: 'https://www.youtube-nocookie.com',
+      host: HOSTS[hostIdx],
       videoId: id,
       playerVars: vars,
       events: {
         onReady: () => { ready = true; resolve(); },
         onStateChange: onState,
+        onError,
       },
     });
   }));
@@ -146,14 +171,15 @@
     clearUpNext();
     const first = !select.done;
     select.done = true;
-    if (window.gsap && !reduce && !first) {
-      const g = window.gsap;
-      g.timeline()
-        .to([poster, '.cinema__meta-in'], { opacity: 0, duration: 0.25, ease: 'power2.in' })
-        .add(swap)
-        .fromTo(poster, { opacity: 0, scale: 1.06, filter: 'blur(10px)' }, { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.9, ease: 'expo.out', clearProps: 'filter,transform,opacity' })
-        .fromTo('.cinema__meta-in', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.7, ease: 'expo.out', clearProps: 'opacity,transform' }, '<0.1');
-    } else swap();
+    swap();   // content changes at once; the fade below is decoration only
+    if (!reduce && !first) {
+      [poster, document.querySelector('.cinema__meta-in')].forEach((el) => {
+        if (!el) return;
+        el.classList.remove('is-swapping');
+        void el.offsetWidth;
+        el.classList.add('is-swapping');
+      });
+    }
     if (player && ready) {
       autoplay ? player.loadVideoById(c.dataset.film) : player.cueVideoById(c.dataset.film);
       if (!autoplay) setState('idle');

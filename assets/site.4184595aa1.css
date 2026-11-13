@@ -1534,35 +1534,6 @@ html.is-paused .badge-spin svg { animation-play-state: paused; }
 .form-status { border-radius: var(--r-md); }
 .process__curve { display: none; }
 .process__step.is-active .process__dot { box-shadow: 0 0 0 6px var(--bg), 0 0 0 7px rgba(227, 43, 142, 0.35); }
-.fab-wa {
-  position: fixed;
-  z-index: 90;
-  right: clamp(14px, 2vw, 28px);
-  bottom: clamp(14px, 2vw, 28px);
-  display: inline-flex;
-  align-items: center;
-  gap: 0;
-  height: 3.5rem;
-  min-width: 3.5rem;
-  padding: 0 1rem;
-  border-radius: 999px;
-  background: #1fae55;
-  color: #fff;
-  text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: 500;
-  box-shadow: 0 18px 40px -16px rgba(16, 90, 45, 0.6);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(16px) scale(0.9);
-  transition: opacity 0.4s, transform 0.5s var(--ease-out), visibility 0s 0.5s, gap 0.4s var(--ease-out);
-}
-.fab-wa.is-visible { opacity: 1; visibility: visible; transform: none; transition: opacity 0.4s, transform 0.5s var(--ease-out), visibility 0s, gap 0.4s var(--ease-out); }
-.fab-wa .icon { width: 1.5rem; height: 1.5rem; flex: none; }
-.fab-wa span { max-width: 0; overflow: hidden; white-space: nowrap; transition: max-width 0.5s var(--ease-out); }
-.fab-wa:hover, .fab-wa:focus-visible { gap: 0.6rem; }
-.fab-wa:hover span, .fab-wa:focus-visible span { max-width: 12rem; }
-.no-js .fab-wa { opacity: 1; visibility: visible; transform: none; }
 picture[style*='background'] { display: block; }
 .img-fade img[data-fade] { opacity: 0; transition: opacity 0.8s var(--ease-out); }
 .img-fade img[data-fade].is-loaded { opacity: 1; }
@@ -1637,7 +1608,6 @@ html.is-paused .page-hero::before, html.is-paused .cs-hero__media img, html.is-p
 }
 /* Keep content clear of notches and the home indicator (viewport-fit=cover) */
 .container { padding-left: max(var(--gutter), env(safe-area-inset-left)); padding-right: max(var(--gutter), env(safe-area-inset-right)); }
-.fab-wa { right: max(clamp(14px, 2vw, 28px), env(safe-area-inset-right)); bottom: max(clamp(14px, 2vw, 28px), env(safe-area-inset-bottom)); }
 .mobile-menu__inner { padding-bottom: max(2rem, env(safe-area-inset-bottom)); }
 @media (max-width: 600px) {
   .contact-block li small { display: block; padding-left: 1.65rem; }
@@ -2597,3 +2567,44 @@ html.is-paused .phero__bg img, html.is-paused .phero__frame, html.is-paused .phe
   .ct-card:hover::before, .ct-bubble.is-pulse, .ct-bubble p.is-last::after { animation: none; }
   .ct-card, .ct-chip, .ct-studio img, .ct-faq__a { transition: none; }
 }
+
+/* ==========================================================================
+   Floating Call + WhatsApp buttons
+   ========================================================================== */
+.fab { position: fixed; z-index: 90; right: max(clamp(14px, 2vw, 28px), env(safe-area-inset-right)); bottom: max(clamp(14px, 2vw, 28px), env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; align-items: flex-end; gap: 12px; pointer-events: none; opacity: 0; visibility: hidden; transform: translateY(18px);
+  transition: opacity 0.4s, transform 0.6s var(--ease-out), visibility 0s 0.6s; }
+.fab.is-visible { opacity: 1; visibility: visible; transform: none; transition: opacity 0.4s, transform 0.6s var(--ease-out), visibility 0s; }
+.no-js .fab { opacity: 1; visibility: visible; transform: none; }
+.fab__btn { position: relative; display: inline-flex; flex-direction: row-reverse; align-items: center; gap: 0; height: 56px; min-width: 56px; padding: 0 16px; border-radius: 999px;
+  color: #fff; text-decoration: none; font-size: 0.875rem; font-weight: 500; pointer-events: auto; -webkit-tap-highlight-color: transparent;
+  transition: gap 0.45s var(--ease-out), transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out), background-color 0.3s; }
+.fab__btn--call { background: var(--hm-magenta, #c23788); box-shadow: 0 16px 36px -14px rgba(194, 55, 136, 0.75); }
+.fab__btn--call:hover { background: var(--hm-magenta-deep, #a12a70); }
+.fab__btn--wa { background: #1fae55; box-shadow: 0 16px 36px -14px rgba(16, 110, 52, 0.7); }
+.fab__btn--wa:hover { background: #17954a; }
+.fab__icon { display: grid; place-items: center; flex: none; width: 24px; height: 24px; }
+.fab__icon svg { width: 24px; height: 24px; }
+.fab__btn--call .fab__icon svg { width: 22px; height: 22px; }
+.fab__label { max-width: 0; overflow: hidden; white-space: nowrap; transition: max-width 0.5s var(--ease-out); }
+/* soft ring that pulses around WhatsApp; the phone gives a gentle ring-ring wiggle */
+.fab__btn--wa::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: #1fae55; animation: fab-ping 2.6s var(--ease-out) infinite; }
+.fab__btn--call .fab__icon { animation: fab-ring 4s ease-in-out 1.5s infinite; transform-origin: 50% 60%; }
+@keyframes fab-ping { 0% { transform: scale(1); opacity: 0.55; } 70%, 100% { transform: scale(1.45); opacity: 0; } }
+@keyframes fab-ring { 0%, 84%, 100% { transform: none; } 86% { transform: rotate(-14deg); } 88% { transform: rotate(12deg); } 90% { transform: rotate(-10deg); }
+  92% { transform: rotate(8deg); } 94% { transform: rotate(-4deg); } 96% { transform: none; } }
+.fab__btn:focus-visible { outline: 3px solid var(--focus, #e32b8e); outline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) {
+  .fab__btn:hover, .fab__btn:focus-visible { gap: 0.6rem; transform: translateY(-2px); }
+  .fab__btn:hover .fab__label, .fab__btn:focus-visible .fab__label { max-width: 14rem; }
+  .fab__btn:hover::before { animation-play-state: paused; opacity: 0; }
+}
+@media (max-width: 600px) {
+  .fab { gap: 10px; }
+  .fab__btn { height: 52px; min-width: 52px; padding: 0 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fab, .fab__btn, .fab__label { transition: none; }
+  .fab__btn--wa::before, .fab__btn--call .fab__icon { animation: none; }
+}
+@media print { .fab { display: none; } }

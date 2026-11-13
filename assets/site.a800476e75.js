@@ -27,18 +27,18 @@
   });
 
   /* ---------------------------------------------------------------------------
-     Floating WhatsApp button: appears after the hero, steps aside for the
-     enquiry section and footer so it never covers the form or contact links
+     Floating Call + WhatsApp buttons: always on hand, step aside for the
+     enquiry send buttons and footer so it never covers the form or contact links
      ------------------------------------------------------------------------ */
   const fab = $('[data-fab]');
   if (fab) {
     const covering = new Set();
-    const updateFab = () => fab.classList.toggle('is-visible', window.scrollY > 560 && covering.size === 0);
+    const updateFab = () => fab.classList.toggle('is-visible', covering.size === 0);
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => (e.isIntersecting ? covering.add(e.target) : covering.delete(e.target)));
       updateFab();
     }, { rootMargin: '0px 0px -10% 0px' });
-    $$('.site-footer, #start, .contact-layout').forEach((el) => io.observe(el));
+    $$('.site-footer, #start, .contact-layout, .ct-send').forEach((el) => io.observe(el));
     window.addEventListener('scroll', updateFab, { passive: true });
     updateFab();
   }
